@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.kimi-reroute-proxy</string>
+  <key>ProgramArguments</key>
+  <array>
+    <!-- Adjust node path if needed: `which node` (Intel brew: /usr/local/bin/node) -->
+    <string>/opt/homebrew/bin/node</string>
+    <!-- Replace YOUR_USERNAME with your macOS username -->
+    <string>/Users/YOUR_USERNAME/.claude/kimi-reroute-proxy.cjs</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/YOUR_USERNAME/.claude/kimi-reroute-proxy.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/YOUR_USERNAME/.claude/kimi-reroute-proxy.log</string>
+</dict>
+</plist>

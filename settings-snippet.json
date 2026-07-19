@@ -1,0 +1,8 @@
+{
+  "_comment": "Merge these keys into ~/.claude/settings.json (don't replace the whole file). switchModelsOnFlag must be true or the safeguard reroute never fires.",
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8787",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "kimi-k3[1m]"
+  },
+  "switchModelsOnFlag": true
+}
