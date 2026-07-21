@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![proxy size](https://img.shields.io/badge/proxy-123%20lines-blue.svg)](kimi-reroute-proxy.cjs)
 [![deps](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](kimi-reroute-proxy.cjs)
+[![Follow @TEA_Resistance](https://img.shields.io/badge/follow-%40TEA__Resistance-1DA1F2.svg)](https://x.com/TEA_Resistance)
 
 **See every time Claude Code reroutes your request to a different model — and choose what the fallback model is.**
 
@@ -22,6 +23,56 @@ two settings keys.
 [2026-07-21T09:02:10Z] KIMI      model=kimi-k3        POST /v1/messages -> 200
 ```
 *Every KIMI line is a silent downgrade that got caught — and answered by the model you chose.*
+
+## Why
+
+- **Safeguard reroutes are silent.** No banner, no warning — the response just
+  comes back from a different model than the one you picked.
+- **The fallback model should be your choice.** The reroute target is a
+  client-side config value; this proxy lets you point it at an open model.
+- **Zero trust surface.** Zero dependencies, loopback-only, your Anthropic auth
+  passes through untouched, the Kimi key never leaves the keychain.
+
+## Quick start
+
+```bash
+cp kimi-reroute-proxy.cjs ~/.claude/
+security add-generic-password -s moonshot-kimi -a "$USER" -w "sk-kimi-YOUR_KEY"
+cp com.kimi-reroute-proxy.plist ~/Library/LaunchAgents/   # edit YOUR_USERNAME + node path first
+launchctl load ~/Library/LaunchAgents/com.kimi-reroute-proxy.plist
+# then merge settings-snippet.json into ~/.claude/settings.json and restart Claude Code
+```
+
+Verify with `/status` (Base URL should read `http://127.0.0.1:8787`) or the curl
+test in [Manual setup](#setup).
+
+## Roadmap
+
+| Version | What |
+|---|---|
+| v0.2 | `stats` command — shareable reroute summary, formatted for screenshots |
+| v0.3 | Linux systemd unit + Windows instructions |
+| v0.4 | Multi-provider fallback presets (GLM / DeepSeek / OpenRouter) |
+| v1.0 | Tests, semver, docs freeze |
+
+Watch releases to follow along.
+
+## FAQ
+
+**Is this against Anthropic's ToS?** It runs locally against your own session,
+on your own machine. It logs rather than hides, forwards flagged requests to a
+different provider, and impersonates nothing. No API keys are shared.
+
+**Does it touch my Anthropic auth or quota?** No. Anthropic traffic passes
+through byte-identical with your normal auth. Only requests already flagged for
+rerouting take the Kimi branch.
+
+**Windows/Linux?** macOS today (launchd + keychain). Linux systemd and Windows
+instructions are on the roadmap — issues and PRs welcome.
+
+**Why Kimi K3?** Open weights, 1M context, #4 on Agent Arena (level with Opus
+4.8). Any Anthropic-compatible endpoint works — see the env overrides below.
+
 
 
 ## How it works
