@@ -4,6 +4,7 @@
 [![proxy size](https://img.shields.io/badge/proxy-123%20lines-blue.svg)](kimi-reroute-proxy.cjs)
 [![deps](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](kimi-reroute-proxy.cjs)
 [![Follow @TEA_Resistance](https://img.shields.io/badge/follow-%40TEA__Resistance-1DA1F2.svg)](https://x.com/TEA_Resistance)
+[![中文 README](https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-red.svg)](README_zh.md)
 
 **See every time Claude Code reroutes your request to a different model — and choose what the fallback model is.**
 
