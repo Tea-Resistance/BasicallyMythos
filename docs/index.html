@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code silent downgrade: the reroute dataset | BasicallyMythos</title>
+<meta name="description" content="Real traffic logs showing how often Claude Code reroutes requests to a different model. 7,128 requests, 94.6% on the fallback path, every direct attempt rate-limited. Raw data from a 123-line local observability proxy.">
+<style>
+  :root { color-scheme: dark; }
+  body { background:#000; color:#c9d1c9; font:16px/1.6 ui-monospace,Menlo,monospace; max-width:760px; margin:0 auto; padding:48px 20px; }
+  h1,h2 { color:#33ff33; font-weight:700; }
+  h1 { font-size:1.6rem; } h2 { font-size:1.15rem; margin-top:2.2em; }
+  .stat { display:flex; gap:16px; flex-wrap:wrap; margin:1.5em 0; }
+  .stat div { border:1px solid #1c8c1c; padding:14px 18px; }
+  .stat b { display:block; color:#33ff33; font-size:1.8rem; }
+  pre { background:#0a0e0a; border:1px solid #163; padding:16px; overflow-x:auto; color:#9f9; }
+  a { color:#33ff33; }
+  .dim { color:#4a7a4a; }
+  table { border-collapse:collapse; } td,th { border:1px solid #163; padding:6px 12px; text-align:left; }
+</style>
+</head>
+<body>
+<h1>Claude Code silent downgrade: the reroute dataset</h1>
+<p class="dim">Live log data from <a href="https://github.com/Tea-Resistance/BasicallyMythos">BasicallyMythos</a>, a 123-line local proxy that observes every Claude Code model reroute. Updated continuously.</p>
+
+<p>When Claude Code's safety layer flags a request, the request does not fail. It is re-issued to a different model, with no banner and no warning. This page documents what that looks like in real traffic.</p>
+
+<div class="stat">
+  <div><b>7,128</b>requests logged (3 days)</div>
+  <div><b>94.6%</b>went through the fallback path</div>
+  <div><b>384</b>direct-route attempts rate-limited (429)</div>
+  <div><b>98.2%</b>fallback success rate</div>
+</div>
+
+<h2>Every direct attempt failed. Every one.</h2>
+<p>Across all three days, <strong>every direct POST to the frontier endpoint returned 429</strong>. The fallback path (an open-weights model, Kimi K3) answered 98.2% of the 6,744 rerouted requests. The tool did not degrade gracefully; it failed over, silently, thousands of times.</p>
+
+<pre>[2026-07-21T09:01:57Z] anthropic model=claude-fable-5 POST /v1/messages -&gt; 429
+[2026-07-21T09:02:10Z] KIMI      model=kimi-k3        POST /v1/messages -&gt; 200</pre>
+
+<h2>Per-day volume</h2>
+<table>
+<tr><th>Date (UTC)</th><th>Requests</th><th>Rerouted</th></tr>
+<tr><td>2026-07-19</td><td>677</td><td>574</td></tr>
+<tr><td>2026-07-20</td><td>1,630</td><td>1,571</td></tr>
+<tr><td>2026-07-21</td><td>4,821</td><td>4,599</td></tr>
+</table>
+
+<h2>The mechanism</h2>
+<p>The reroute is client-side. When a safeguard fires, the CLI re-issues the request using the model id in <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>, to the same <code>ANTHROPIC_BASE_URL</code> as everything else. The downgrade is not a server decision you can appeal. It is a config value on your own machine, and a config value on your own machine is something you can see and choose.</p>
+
+<h2>Get your own numbers</h2>
+<p><a href="https://github.com/Tea-Resistance/BasicallyMythos">BasicallyMythos</a> is MIT-licensed, zero dependencies, loopback-only. Setup is about ten minutes. Run <code>node reroute-stats.cjs</code> for your own report. If your intercept rate looks like this, the author wants to hear about it: <a href="https://x.com/TEA_Resistance">@TEA_Resistance</a>.</p>
+
+<p class="dim">Related coverage: GitHub issue <a href="https://github.com/anthropics/claude-code/issues/19468">anthropics/claude-code#19468</a> (systematic model degradation reports). This dataset is independent user-side observation, not affiliated with Anthropic.</p>
+</body>
+</html>
