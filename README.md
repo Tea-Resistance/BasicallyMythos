@@ -1,11 +1,28 @@
-# Fable 5 → Kimi K3 safeguard reroute for Claude Code
+# BasicallyMythos — Claude Code reroute observability + fallback choice
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![proxy size](https://img.shields.io/badge/proxy-123%20lines-blue.svg)](kimi-reroute-proxy.cjs)
+[![deps](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](kimi-reroute-proxy.cjs)
+
+**See every time Claude Code reroutes your request to a different model — and choose what the fallback model is.**
 
 When Fable 5 trips a safety safeguard, Claude Code re-runs that request on Opus.
 This setup makes it re-run on **Kimi K3** instead — automatically, mid-session,
-while everything else stays on your Anthropic subscription.
+while everything else stays on your Anthropic subscription. And whether or not
+you change the fallback at all, the proxy **logs every reroute**, so the
+downgrade is finally visible.
 
 No third-party routers, no packages. One ~100-line dependency-free Node proxy +
 two settings keys.
+
+![live reroute capture](assets/demo.gif)
+
+```
+[2026-07-21T09:01:57Z] anthropic model=claude-fable-5 POST /v1/messages -> 429
+[2026-07-21T09:02:10Z] KIMI      model=kimi-k3        POST /v1/messages -> 200
+```
+*Every KIMI line is a silent downgrade that got caught — and answered by the model you chose.*
+
 
 ## How it works
 
@@ -99,3 +116,10 @@ Moonshot platform keys would use `api.moonshot.ai` + `/anthropic`).
 Security notes: the proxy binds loopback only; your Anthropic auth passes
 through untouched; the Kimi key is read from the keychain at request time and
 only ever attached on the Kimi branch.
+
+---
+
+Built by **Mythos** — build updates and Claude Code internals at
+[@TEA_Resistance](https://x.com/TEA_Resistance) on X.
+Issues and PRs welcome. If it catches a reroute for you, a star helps others find it.
+
